@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkClient", "SimpleClient\NetworkClient.csproj", "{A8891EA7-B503-4802-BF02-76F15F8A7AFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkClient", "NetworkClient\NetworkClient.csproj", "{5DFC9854-F023-43E7-8069-2C1EE33BFF68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A8891EA7-B503-4802-BF02-76F15F8A7AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8891EA7-B503-4802-BF02-76F15F8A7AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8891EA7-B503-4802-BF02-76F15F8A7AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8891EA7-B503-4802-BF02-76F15F8A7AFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DFC9854-F023-43E7-8069-2C1EE33BFF68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DFC9854-F023-43E7-8069-2C1EE33BFF68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DFC9854-F023-43E7-8069-2C1EE33BFF68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DFC9854-F023-43E7-8069-2C1EE33BFF68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
