@@ -56,7 +56,7 @@ namespace SimpleClient
 
             using (TcpClient client = new TcpClient(SERVER_IP, PORT_NO))
             {
-                int messagesAmount = 10;
+                int messagesAmount = 10000;
 
                 Parallel.For(0, messagesAmount, (i, state) =>
                 {
@@ -66,38 +66,40 @@ namespace SimpleClient
 
                 });
 
-                Console.ReadLine();
-
-
-                /*
-                Parallel.For(0, messagesAmount, (i, state) =>
+                while (true)
                 {
-                    string responce = client.ReadCustom();
-
-                    try
+                    lock (locker)
                     {
-                        CustomResponce cr = JsonSerializer.Deserialize<CustomResponce>(responce);
+                        string responce = client.ReadCustom();
 
-                        if (cr.ResponseCode == ResponceCode.Success)
+                        try
                         {
-                            Console.WriteLine($"Server responce success");
-                        }
-                        else if (cr.ResponseCode == ResponceCode.ClientError) {
-                            Console.WriteLine($"Server responce 400");
-                        }
-                        else if (cr.ResponseCode == ResponceCode.ServerError)
-                        {
-                            Console.WriteLine($"Server responce 500");
-                        }
-                    }
-                    catch (Exception ex) {
-                        Console.WriteLine($"Server send invalid data that cant be parsed to json: {ex.Message}");
-                    }
+                            CustomResponce cr = JsonSerializer.Deserialize<CustomResponce>(responce);
 
-                    Console.WriteLine($"receiving {responce}");
-                });
-                */
+                            if (cr.ResponseCode == ResponceCode.Success)
+                            {
+                                Console.WriteLine($"Server responce success");
+                            }
+                            else if (cr.ResponseCode == ResponceCode.ClientError)
+                            {
+                                Console.WriteLine($"Server responce 400");
+                            }
+                            else if (cr.ResponseCode == ResponceCode.ServerError)
+                            {
+                                Console.WriteLine($"Server responce 500");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Server send invalid data that cant be parsed to json: {ex.Message}");
+                        }
+
+                        Console.WriteLine($"receiving {responce}");
+                    }
+                }
             }
+
+            Console.ReadLine();
 
         }
 
