@@ -15,16 +15,16 @@ namespace SimpleClient
         public static class CustomQueryfactory
         {
             private static int counter;
-            private static Random random=new Random();
+            private static Random random = new Random();
 
-            private static CustomQuery Create(int number)
+            private static CustomQuery Create(int queryNumber)
             {
                 counter++;
 
                 return new CustomQuery()
                 {
-                    QueryNumber = number,
-                    ThreadNumber = 1,
+                    QueryNumber = queryNumber,
+                    ThreadNumber = System.Threading.Thread.CurrentThread.ManagedThreadId,
                     RandomInt = random.Next(0, 1000)
                 };
             }
@@ -35,7 +35,8 @@ namespace SimpleClient
                 string resultQuery = customQuery.ToJson();
 
                 bool damageQuery = random.Next(0, 20) % 13 == 0;
-                if (damageQuery) {
+                if (damageQuery)
+                {
                     resultQuery = resultQuery + "damaged";
                 }
 
@@ -45,23 +46,24 @@ namespace SimpleClient
 
         static void Main(string[] args)
         {
-            DoAdvancedClientWork();
+            Task2_DoAdvancedClientWork();
+            //DoSimpleClientWork();
         }
 
-        public static void DoAdvancedClientWork()
+        public static void Task2_DoAdvancedClientWork()
         {
+            object locker = new object();
 
             using (TcpClient client = new TcpClient(SERVER_IP, PORT_NO))
             {
-                int messagesAmount = 20;
+                int messagesAmount = 10;
 
-                client.WriteCustom(messagesAmount.ToString());
-
-                //первый поток отвечает за отправку
                 Parallel.For(0, messagesAmount, (i, state) =>
                 {
                     string randomQuery = CustomQueryfactory.GenerateRandomQuery(i);
+
                     client.WriteCustom(randomQuery);
+
                 });
 
                 Console.ReadLine();
