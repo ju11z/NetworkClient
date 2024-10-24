@@ -68,34 +68,31 @@ namespace SimpleClient
 
                 while (true)
                 {
-                    lock (locker)
+                    string responce = client.ReadCustom();
+
+                    try
                     {
-                        string responce = client.ReadCustom();
+                        CustomResponce cr = JsonSerializer.Deserialize<CustomResponce>(responce);
 
-                        try
+                        if (cr.ResponseCode == ResponceCode.Success)
                         {
-                            CustomResponce cr = JsonSerializer.Deserialize<CustomResponce>(responce);
-
-                            if (cr.ResponseCode == ResponceCode.Success)
-                            {
-                                Console.WriteLine($"Server responce success");
-                            }
-                            else if (cr.ResponseCode == ResponceCode.ClientError)
-                            {
-                                Console.WriteLine($"Server responce 400");
-                            }
-                            else if (cr.ResponseCode == ResponceCode.ServerError)
-                            {
-                                Console.WriteLine($"Server responce 500");
-                            }
+                            Console.WriteLine($"Server responce success");
                         }
-                        catch (Exception ex)
+                        else if (cr.ResponseCode == ResponceCode.ClientError)
                         {
-                            Console.WriteLine($"Server send invalid data that cant be parsed to json: {ex.Message}");
+                            Console.WriteLine($"Server responce 400");
                         }
-
-                        Console.WriteLine($"receiving {responce}");
+                        else if (cr.ResponseCode == ResponceCode.ServerError)
+                        {
+                            Console.WriteLine($"Server responce 500");
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Server send invalid data that cant be parsed to json: {ex.Message}");
+                    }
+
+                    Console.WriteLine($"receiving {responce}");
                 }
             }
 
