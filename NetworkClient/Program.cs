@@ -46,9 +46,16 @@ namespace SimpleClient
 
         static void Main(string[] args)
         {
-            Task2_DoAdvancedClientWork();
+            //Task3_DoAsyncChatClientWork();
+            //Task2_DoAdvancedClientWork();
             //DoSimpleClientWork();
         }
+
+        //connect query
+        //send qquery
+        //recive query
+
+        
 
         public static void Task2_DoAdvancedClientWork()
         {
