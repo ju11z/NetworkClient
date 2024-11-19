@@ -11,8 +11,11 @@ namespace AsyncChat
         const int PORT_NO = 5000;
         const string SERVER_IP = "127.0.0.1";
         static Random random = new Random();
+        private const int askMessagesIntervalMs = 10000;
 
         private static bool isLoggedIn = false;
+        private static string currentLogin;
+
 
         static async Task Main(string[] args)
         {
@@ -25,19 +28,68 @@ namespace AsyncChat
             using (TcpClient client = new TcpClient(SERVER_IP, PORT_NO))
             {
                 Task.Run(() => HandleServerResponces(client));
+                Task.Run(() => HandleUserInput(client));
+                Task.Run(() => AskServerForNewMessages(client));
+            }
+        }
 
-                while (true)
+        private static async Task AskServerForNewMessages(TcpClient client)
+        {
+            while (true)
+            {
+                if (isLoggedIn)
                 {
-                    //await SendMessageToServer(client);
+                    Console.WriteLine("Asking server for new messages");
+
+                    AskForNewMessagesRequest askForNewMessagesRequest = new AskForNewMessagesRequest(currentLogin);
+                    await client.WriteCustomAsync(JsonSerializer.Serialize(askForNewMessagesRequest), false);
+                    await Task.Delay(askMessagesIntervalMs);
+                }
+
+            }
+        }
+
+        private static async Task HandleUserInput(TcpClient client)
+        {
+            while (true)
+            {
+                if (isLoggedIn)
+                {
+                    Console.WriteLine("Type 1 to send message.\n");
+                    string input = Console.ReadLine();
+
+                    switch (input.Trim())
+                    {
+                        case "1":
+                            {
+                                Console.WriteLine("Input receiver login:");
+                                string receiverLogin = Console.ReadLine();
+
+                                Console.WriteLine("Input mesage:");
+                                string message = Console.ReadLine();
+
+                                await SendMessageAsync(client, receiverLogin, message);
+
+                                break;
+                            }
+                    }
                 }
             }
         }
+
+        public static async Task SendMessageAsync(TcpClient client, string receiverLogin, string message)
+        {
+            ClientMessageData clientMessageData = new ClientMessageData(currentLogin, receiverLogin, message);
+
+            await ExtendedTCPClient.WriteCustomAsync(client, JsonSerializer.Serialize(clientMessageData), false);
+        }
+
 
         private static async Task HandleServerResponces(TcpClient client)
         {
             while (true)
             {
-                string message = await client.ReadCustomAsync(false);
+                string message = await client.ReadCustomAsync();
 
                 if (message != null && message.Length != 0)
                 {
@@ -73,6 +125,7 @@ namespace AsyncChat
                 if (serverLoginResponce.IsClientLoggedIn)
                 {
                     isLoggedIn = true;
+                    currentLogin = serverLoginResponce.AgreedLogin;
                     Console.WriteLine(serverLoginResponce.Message);
                     return responceRead;
                 }
@@ -93,32 +146,7 @@ namespace AsyncChat
             return responceRead;
         }
 
-        private static async Task GetServerInput(TcpClient client)
-        {
-            while (true)
-            {
 
-                string message = await client.ReadCustomAsync(false);
-
-                if (message != null && message.Length != 0)
-                {
-                    Console.WriteLine($"Received message {message}");
-                }
-            }
-        }
-
-        public static async Task SendMessageToServer(TcpClient client)
-        {
-            string message = await GenerateRandomMessage();
-            await ExtendedTCPClient.WriteCustomAsync(client, message, false);
-        }
-
-        private static async Task<string> GenerateRandomMessage()
-        {
-            int messageDelay = random.Next(2000, 8000);
-            await Task.Delay(messageDelay);
-            return ExtendedTCPClient.GenerateRandomLatinString(20);
-        }
     }
 
 }
